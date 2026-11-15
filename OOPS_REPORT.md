@@ -39,7 +39,7 @@ Encapsulation refers to restricting direct access to internal state and exposing
 
 ### 3.1 Encapsulation in the Controller Layer
 
-The controller class [ApiController.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/controller/ApiController.java) uses private final fields for the execution service and translation service:
+The controller class [ApiController.java](src/main/java/com/py2java/cloudide/controller/ApiController.java) uses private final fields for the execution service and translation service:
 
 - `executionService`
 - `translationService`
@@ -59,19 +59,19 @@ These methods coordinate with the services but do not embed execution logic dire
 
 The project uses request DTOs such as:
 
-- [RunRequest.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/dto/RunRequest.java)
-- [TerminalRequest.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/dto/TerminalRequest.java)
-- [TranslateRequest.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/dto/TranslateRequest.java)
+- [RunRequest.java](src/main/java/com/py2java/cloudide/dto/RunRequest.java)
+- [TerminalRequest.java](src/main/java/com/py2java/cloudide/dto/TerminalRequest.java)
+- [TranslateRequest.java](src/main/java/com/py2java/cloudide/dto/TranslateRequest.java)
 
 These objects package request data and apply validation rules using Jakarta validation annotations. They protect the business layer from invalid or malformed input while ensuring that the request contract remains consistent with the original FastAPI backend.
 
 ### 3.3 Encapsulation in Execution Configuration
 
-The class [DockerExecutionProperties.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/config/DockerExecutionProperties.java) centralizes runtime constraints such as memory limit, CPU limit, timeout, and container user. These values are stored in configuration objects rather than scattered across classes. This encapsulation limits configuration changes to the configuration layer and prevents accidental modification from unrelated parts of the system.
+The class [DockerExecutionProperties.java](src/main/java/com/py2java/cloudide/config/DockerExecutionProperties.java) centralizes runtime constraints such as memory limit, CPU limit, timeout, and container user. These values are stored in configuration objects rather than scattered across classes. This encapsulation limits configuration changes to the configuration layer and prevents accidental modification from unrelated parts of the system.
 
 ## 4. Inheritance
 
-Inheritance is used to reduce duplication and reuse common behavior across similar execution types. The most important example is the abstract executor hierarchy built around [CodeExecutor.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/executor/CodeExecutor.java).
+Inheritance is used to reduce duplication and reuse common behavior across similar execution types. The most important example is the abstract executor hierarchy built around [CodeExecutor.java](src/main/java/com/py2java/cloudide/executor/CodeExecutor.java).
 
 ### 4.1 Abstract Base Class
 
@@ -90,8 +90,8 @@ This class implements the reusable execution pipeline once, and all language-spe
 
 The project defines concrete subclasses:
 
-- [PythonExecutor.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/executor/PythonExecutor.java)
-- [JavaExecutor.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/executor/JavaExecutor.java)
+- [PythonExecutor.java](src/main/java/com/py2java/cloudide/executor/PythonExecutor.java)
+- [JavaExecutor.java](src/main/java/com/py2java/cloudide/executor/JavaExecutor.java)
 
 These classes extend `CodeExecutor` and provide specific information such as:
 
@@ -131,7 +131,7 @@ Abstraction hides implementation details and exposes only the essential operatio
 
 ### 6.1 Execution Abstraction
 
-The interface [CodeExecutionService.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/service/CodeExecutionService.java) declares the core execution contract:
+The interface [CodeExecutionService.java](src/main/java/com/py2java/cloudide/service/CodeExecutionService.java) declares the core execution contract:
 
 - `dockerAvailable()`
 - `run(String language, String code)`
@@ -141,11 +141,11 @@ This interface separates business logic from the concrete Docker orchestration i
 
 ### 6.2 Translation Abstraction
 
-The interface [CodeTranslationService.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/translator/CodeTranslationService.java) declares the translation contract:
+The interface [CodeTranslationService.java](src/main/java/com/py2java/cloudide/translator/CodeTranslationService.java) declares the translation contract:
 
 - `translate(String code)`
 
-The actual translation logic is implemented by [RuleBasedCodeTranslationService.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/translator/RuleBasedCodeTranslationService.java). This division ensures that translation behavior can evolve without changing the controller or application flow.
+The actual translation logic is implemented by [RuleBasedCodeTranslationService.java](src/main/java/com/py2java/cloudide/translator/RuleBasedCodeTranslationService.java). This division ensures that translation behavior can evolve without changing the controller or application flow.
 
 ### 6.3 Benefit of Abstraction
 
@@ -159,7 +159,7 @@ The `ApiController` acts as the HTTP facade. It accepts requests, validates them
 
 ### 7.2 Service Layer Contains Business Logic
 
-The concrete execution service, [DockerCodeExecutionService.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/service/DockerCodeExecutionService.java), orchestrates runtime execution and enforce safe command restrictions. This layer handles the application workflow without exposing Docker internals to the controller.
+The concrete execution service, [DockerCodeExecutionService.java](src/main/java/com/py2java/cloudide/service/DockerCodeExecutionService.java), orchestrates runtime execution and enforce safe command restrictions. This layer handles the application workflow without exposing Docker internals to the controller.
 
 ### 7.3 Executor Hierarchy Encodes Behavior by Language
 
@@ -167,14 +167,14 @@ The executor classes show the clearest OOP implementation in the system. Shared 
 
 ### 7.4 Translator Engine Isolated from HTTP Layer
 
-The translation logic is implemented in [RuleBasedCodeTranslationService.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/translator/RuleBasedCodeTranslationService.java). This service converts Python syntax into Java structures and returns warnings for unsupported or manual-review cases. This design preserves the original Python translation rules while preventing the controller from becoming overloaded with conversion logic.
+The translation logic is implemented in [RuleBasedCodeTranslationService.java](src/main/java/com/py2java/cloudide/translator/RuleBasedCodeTranslationService.java). This service converts Python syntax into Java structures and returns warnings for unsupported or manual-review cases. This design preserves the original Python translation rules while preventing the controller from becoming overloaded with conversion logic.
 
 ## 8. Centralized Error Handling and Domain Models
 
 The backend also uses object-oriented design in its error and response model layers.
 
-- [ApiExceptionHandler.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/exception/ApiExceptionHandler.java) centralizes exception handling.
-- Domain model classes such as [ExecutionResult.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/model/ExecutionResult.java), [HealthStatus.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/model/HealthStatus.java), and [TranslationResult.java](PY2JAVA-cloud-ide-starter/src/main/java/com/py2java/cloudide/model/TranslationResult.java) represent return values clearly.
+- [ApiExceptionHandler.java](src/main/java/com/py2java/cloudide/exception/ApiExceptionHandler.java) centralizes exception handling.
+- Domain model classes such as [ExecutionResult.java](src/main/java/com/py2java/cloudide/model/ExecutionResult.java), [HealthStatus.java](src/main/java/com/py2java/cloudide/model/HealthStatus.java), and [TranslationResult.java](src/main/java/com/py2java/cloudide/model/TranslationResult.java) represent return values clearly.
 
 These classes enforce a consistent response structure and keep API behavior predictable. The use of strong domain objects with defined fields is another example of encapsulation and abstraction in practice.
 

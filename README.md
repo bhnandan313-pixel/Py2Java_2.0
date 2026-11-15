@@ -3,29 +3,61 @@
 A local browser IDE with Python and Java execution in isolated Docker containers and a basic Python-to-Java converter. The backend is Java 21 with Spring Boot; the existing frontend is served unchanged.
 
 ## Requirements
-- Java 21
+
+- Java 21 JDK
 - Maven 3.9+
 - Docker Engine/Desktop (running)
+
+## First-time setup on Windows
+
+Install the JDK and Docker Desktop from PowerShell:
+
+```powershell
+winget install --id EclipseAdoptium.Temurin.21.JDK -e
+winget install --id Docker.DockerDesktop -e
+```
+
+Install Maven separately: download the **Binary zip archive** from the [Apache Maven download page](https://maven.apache.org/download.cgi), extract it to a permanent folder (for example, `%USERPROFILE%\tools\apache-maven-3.x.x`), and add that folder's `bin` subfolder to your user `Path` in Windows Environment Variables. Maven is not available in the default WinGet catalog as an Apache Maven package.
+
+If Maven reports that `JAVA_HOME` is missing, set the user `JAVA_HOME` environment variable to the JDK installation folder (for example, `C:\Program Files\Eclipse Adoptium\jdk-21...`, not its `bin` folder), and add `%JAVA_HOME%\bin` to `Path`.
+
+After installing or changing environment variables, close and reopen VS Code. Verify the tools in a new terminal:
+
+```powershell
+java -version
+javac -version
+mvn -v
+docker --version
+```
 
 ## Run locally
 
 1. Start Docker Desktop/Engine.
-2. From this project directory, optionally pull the execution images:
+2. In VS Code, open this project and open a terminal in the project root (the folder containing `pom.xml`).
+3. On the first run, optionally download the execution images:
 
    ```powershell
    docker pull python:3.12-alpine
    docker pull eclipse-temurin:21-jdk
    ```
 
-3. Start the backend:
+4. Start the backend:
 
    ```powershell
    mvn spring-boot:run
    ```
 
-4. Open http://127.0.0.1:8000. The backend health endpoint is http://127.0.0.1:8000/api/health.
+5. Open http://127.0.0.1:8000. The backend health endpoint is http://127.0.0.1:8000/api/health.
 
-Run the test suite with `mvn test` and create an executable JAR with `mvn package`.
+## Run it next time
+
+You do not need to reinstall Java, Maven, or Docker. Start Docker Desktop, open a terminal in the project root, and run:
+
+```powershell
+mvn spring-boot:run
+```
+
+Stop the backend with `Ctrl+C`. Run the test suite with `mvn test`, or create an executable JAR with `mvn package`.
 
 ## Docker image
 
