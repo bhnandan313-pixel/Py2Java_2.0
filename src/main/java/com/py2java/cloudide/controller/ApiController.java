@@ -1,12 +1,15 @@
 package com.py2java.cloudide.controller;
 
+import com.py2java.cloudide.dto.AiAssistRequest;
 import com.py2java.cloudide.dto.RunRequest;
 import com.py2java.cloudide.dto.TerminalRequest;
 import com.py2java.cloudide.dto.TranslateRequest;
+import com.py2java.cloudide.model.AiAssistResponse;
 import com.py2java.cloudide.model.ExecutionResult;
 import com.py2java.cloudide.model.HealthStatus;
 import com.py2java.cloudide.model.TerminalResult;
 import com.py2java.cloudide.model.TranslationResult;
+import com.py2java.cloudide.service.AiAssistantService;
 import com.py2java.cloudide.service.CodeExecutionService;
 import com.py2java.cloudide.translator.CodeTranslationService;
 import jakarta.validation.Valid;
@@ -22,12 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ApiController {
     private final CodeExecutionService executionService;
     private final CodeTranslationService translationService;
+    private final AiAssistantService aiAssistantService;
 
     public ApiController(
             CodeExecutionService executionService,
-            CodeTranslationService translationService) {
+            CodeTranslationService translationService,
+            AiAssistantService aiAssistantService) {
         this.executionService = executionService;
         this.translationService = translationService;
+        this.aiAssistantService = aiAssistantService;
     }
 
     @GetMapping(value = "/", produces = MediaType.TEXT_HTML_VALUE)
@@ -57,5 +63,10 @@ public class ApiController {
                 translated.java(),
                 translated.warnings(),
                 translated.explanation());
+    }
+
+    @PostMapping("/api/ai/assist")
+    public AiAssistResponse aiAssist(@Valid @RequestBody AiAssistRequest request) {
+        return aiAssistantService.assist(request);
     }
 }

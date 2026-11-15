@@ -12,6 +12,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(AiAssistantException.class)
+    public ResponseEntity<ApiError> aiUnavailable(AiAssistantException exception) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ApiError(exception.getMessage()));
+    }
+
+    @ExceptionHandler(AiRequestException.class)
+    public ResponseEntity<ApiError> invalidAiRequest(AiRequestException exception) {
+        return ResponseEntity.unprocessableEntity().body(new ApiError(exception.getMessage()));
+    }
+
     @ExceptionHandler(DockerUnavailableException.class)
     public ResponseEntity<ApiError> dockerUnavailable(DockerUnavailableException exception) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)

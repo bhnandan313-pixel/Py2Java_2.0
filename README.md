@@ -51,6 +51,16 @@ docker --version
 
 ## Run it next time
 
+$env:JAVA_HOME = [Environment]::GetEnvironmentVariable('JAVA_HOME', 'User')
+$env:MAVEN_HOME = [Environment]::GetEnvironmentVariable('MAVEN_HOME', 'User')
+$env:Path = "$env:MAVEN_HOME\bin;$env:JAVA_HOME\bin;$env:Path"
+mvn -v
+
+
+docker stop py2java-cloud-ide-workspace
+mvn spring-boot:run
+
+
 You do not need to reinstall Java, Maven, or Docker. Start Docker Desktop, open a terminal in the project root, and run:
 
 ```powershell
@@ -58,6 +68,25 @@ mvn spring-boot:run
 ```
 
 Stop the backend with `Ctrl+C`. Run the test suite with `mvn test`, or create an executable JAR with `mvn package`.
+
+## AI assistant
+
+The AI assistant can explain code, compare Python and Java syntax, answer code questions, and translate complex Python code into a Java 21 starting point. AI translation returns Java source code only; it does not include an explanation or conclusion in the generated code. Use **AI settings** in the UI to choose automatic cloud-with-Ollama-fallback mode or **Ollama only**. Ollama-only mode never calls a cloud provider or sends a cloud API key. In automatic mode, enter an OpenAI-compatible API base URL, model name, and API key. Example base URLs:
+
+- OpenAI: `https://api.openai.com/v1`
+- Gemini OpenAI-compatible endpoint: `https://generativelanguage.googleapis.com/v1beta/openai`
+- Groq: `https://api.groq.com/openai/v1`
+
+The API key is held in browser memory for the current page session only. It is sent to the configured provider with the request and is not persisted by the app. Your source code and question are also sent to that provider. Use only a provider you trust.
+
+If the cloud provider is not configured or fails, the app tries Ollama at `http://localhost:11434` using `qwen2.5-coder:3b` by default. Install Ollama and pull the model with:
+
+```powershell
+ollama pull qwen2.5-coder:3b
+```
+ollama run qwen2.5-coder:3b
+
+AI-generated Java can require changes, especially when Python libraries have no direct Java equivalent. Review the output and run it to verify behavior.
 
 ## Docker image
 
@@ -93,5 +122,5 @@ The terminal remains restricted to `python --version`, `java -version`, `javac -
 ## Current limitations
 
 - Translation supports only a small subset of Python syntax and is not a complete compiler.
-- The AI assistant is a placeholder panel.
+- AI output depends on the selected model and may need review, especially for unsupported Python libraries.
 - Project persistence, accounts, cloud sync, GitHub integration, and billing are not implemented.

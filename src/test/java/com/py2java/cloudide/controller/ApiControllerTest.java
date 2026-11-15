@@ -8,11 +8,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.py2java.cloudide.dto.AiAssistRequest;
 import com.py2java.cloudide.exception.ApiExceptionHandler;
 import com.py2java.cloudide.exception.DockerUnavailableException;
+import com.py2java.cloudide.model.AiAssistResponse;
 import com.py2java.cloudide.model.ExecutionResult;
 import com.py2java.cloudide.model.TerminalResult;
 import com.py2java.cloudide.model.TranslationOutput;
+import com.py2java.cloudide.service.AiAssistantService;
 import com.py2java.cloudide.service.CodeExecutionService;
 import com.py2java.cloudide.translator.CodeTranslationService;
 import java.util.List;
@@ -35,6 +38,9 @@ class ApiControllerTest {
 
     @MockBean
     private CodeTranslationService translationService;
+
+    @MockBean
+    private AiAssistantService aiAssistantService;
 
     @Test
     void healthResponseUsesTheExistingSnakeCaseContract() throws Exception {
@@ -82,6 +88,29 @@ class ApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(
                         "{\"stdout\":\"Terminal command is not enabled in this starter. Use Run for code execution.\",\"stderr\":\"\",\"exit_code\":0}"));
+    }
+
+    @Test
+    void aiAssistantAcceptsSessionSettingsAndReturnsProviderMetadata() throws Exception {
+        when(aiAssistantService.assist(org.mockito.ArgumentMatchers.any(AiAssistRequest.class)))
+                .thenReturn(new AiAssistResponse(
+                        "explain", "OpenAI-compatible", "This prints a value.", false, ""));
+
+        mockMvc.perform(post("/api/ai/assist")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"task\":\"explain\",\"language\":\"python\",\"code\":\"print(1)\","
+                                + "\"baseUrl\":\"https://api.example.test/v1\",\"model\":\"test-model\","
+                                + "\"apiKey\":\"test-key\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.provider").value("OpenAI-compatible"))
+                .andExpect(jsonPath("$.content").value("This prints a value."))
+                .andExpect(jsonPath("$.used_fallback").value(false));
+
+        mockMvc.perform(post("/api/ai/assist")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"task\":\"explain\",\"language\":\"python\",\"code\":\"print(1)\","
+                                + "\"mode\":\"only-ollama\"}"))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
