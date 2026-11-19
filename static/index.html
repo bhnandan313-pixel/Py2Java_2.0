@@ -12,7 +12,7 @@
             --line: #26364a;
             --text: #e9f1fa;
             --muted: #91a4b9;
-            --green: #65f0a5;
+            --green: #75b621;
             --blue: #59b9ff;
             --red: #ff818b
         }
@@ -433,7 +433,8 @@ print("Hello, " + name)</textarea>
                 <p class="muted">Configure any OpenAI-compatible API. Examples: OpenAI
                     <code>https://api.openai.com/v1</code>; Gemini
                     <code>https://generativelanguage.googleapis.com/v1beta/openai</code>; Groq
-                    <code>https://api.groq.com/openai/v1</code>.</p>
+                    <code>https://api.groq.com/openai/v1</code>.
+                </p>
                 <label for="ai-base-url">API base URL</label><input id="ai-base-url" type="url" autocomplete="url"
                     placeholder="https://api.openai.com/v1">
                 <label for="ai-model">Model name</label><input id="ai-model" type="text" autocomplete="off"
@@ -448,7 +449,8 @@ print("Hello, " + name)</textarea>
             <label for="ollama-model">Ollama fallback model</label><input id="ollama-model" type="text"
                 value="qwen2.5-coder:3b">
             <p class="muted">To use the fallback, install Ollama and pull the selected model, for example
-                <code>ollama pull qwen2.5-coder:3b</code>.</p>
+                <code>ollama pull qwen2.5-coder:3b</code>.
+            </p>
             <div class="settings-actions"><button class="btn" type="button"
                     id="cancel-ai-settings">Cancel</button><button class="btn run" type="submit">Save for this
                     session</button></div>
