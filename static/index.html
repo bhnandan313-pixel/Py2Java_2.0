@@ -1,75 +1,493 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PY2JAVA Cloud IDE</title>
-<style>
-:root{--bg:#080d14;--panel:#101925;--line:#26364a;--text:#e9f1fa;--muted:#91a4b9;--green:#65f0a5;--blue:#59b9ff;--red:#ff818b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#142b3e,transparent 38%),var(--bg);color:var(--text);font:14px Inter,system-ui,sans-serif}
-header{height:64px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:#080d14eF}.brand{font-size:20px;font-weight:850;letter-spacing:.07em}.brand b{color:var(--green)}.badge{color:var(--green);border:1px solid #285b48;border-radius:30px;padding:5px 10px;font-size:11px}
-.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 64px)}aside{border-right:1px solid var(--line);padding:18px 13px;background:#0b131d}.side-title{color:#72869c;font-size:10px;letter-spacing:.15em;margin:12px 8px}.nav{padding:10px;border-radius:7px;color:#c4d1df;margin:3px 0}.nav.active{background:#183044;color:var(--green)}.hint{font-size:11px;color:var(--muted);line-height:1.6;padding:12px 8px}
-main{padding:20px;min-width:0}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}h1{font-size:23px;margin:0}.muted{color:var(--muted);font-size:12px}.buttons{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#172435;color:var(--text);border-radius:7px;padding:9px 12px;cursor:pointer;font-weight:650}.btn:hover{border-color:var(--blue)}.run{background:linear-gradient(110deg,#188c60,#126c9c);border:0}
-.editors{display:grid;grid-template-columns:1fr 1fr;gap:12px}.panel{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);min-width:0}.panelhead{padding:11px 13px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.label{font-weight:750}.language{color:var(--muted);font-size:11px}textarea{width:100%;height:390px;resize:vertical;border:0;outline:0;background:#09111a;color:#dceafa;padding:16px;font:13px/1.7 ui-monospace,Consolas,monospace;tab-size:4}#output{color:#b9e2ff}.console{margin-top:12px}.consolebody{padding:12px;background:#080e15;min-height:115px;max-height:210px;overflow:auto;white-space:pre-wrap;color:#b7c8d8;font:12px/1.6 ui-monospace,monospace}.consolebody .err{color:var(--red)}.terminalbar{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}select{background:#111d2a;color:var(--text);border:1px solid var(--line);padding:7px;border-radius:6px}.status{font-size:11px;color:var(--muted);margin-left:auto;align-self:center}.foot{margin-top:12px;color:#8295a9;font-size:11px;line-height:1.6}
-.assistant{margin-top:12px}.assistantbody{display:flex;gap:8px;padding:10px}.assistantbody textarea{height:78px;min-height:78px;flex:1}.ai-settings{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:0}.ai-settings::backdrop{background:#000b}.ai-settings form{padding:18px}.ai-settings h2{margin:0 0 8px}.ai-settings label{display:block;margin:13px 0 5px;font-weight:650}.ai-settings input,.ai-settings select{width:100%;padding:9px;border:1px solid var(--line);border-radius:6px;background:#09111a;color:var(--text)}.ai-settings fieldset{margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:8px}.ai-settings legend{padding:0 6px;color:var(--muted)}.ai-settings fieldset:disabled{opacity:.55}.ai-settings .muted{line-height:1.6}.settings-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-@media(max-width:850px){.layout{grid-template-columns:1fr}aside{display:none}.editors{grid-template-columns:1fr}textarea{height:280px}main{padding:13px}}
-</style></head>
-<body><header><div class="brand">PY<b>2</b>JAVA <span class="muted">/ CLOUD IDE</span></div><div class="badge">● LOCAL SANDBOX MODE</div></header>
-<div class="layout"><aside><div class="side-title">WORKSPACE</div><div class="nav active">⌘ Editor</div><div class="nav">▣ Python runtime</div><div class="nav">☕ Java runtime</div><div class="nav">▤ Terminal tools</div><div class="side-title">PROJECT</div><div class="nav">📁 Main.java</div><div class="nav">📄 main.py</div><p class="hint">Starter workspace<br>Execution runs in isolated Docker containers on the machine hosting this app.</p></aside>
-<main><div class="top"><div><h1>Code workspace</h1><div class="muted">Write · translate · execute</div></div><div class="buttons"><button class="btn" id="translate">⇄ Quick translate</button><button class="btn" id="ai-translate">AI translate</button><button class="btn" id="explain">Explain code</button><button class="btn" id="compare">Compare syntax</button><button class="btn" id="ai-settings-button">AI settings</button><button class="btn" id="download">↓ Download Java</button><button class="btn run" id="run">▶ Run code</button></div></div>
-<div class="editors"><section class="panel"><div class="panelhead"><span class="label">🐍 Python source</span><span class="language">PYTHON 3</span></div><textarea id="py" spellcheck="false">name = "World"
-print("Hello, " + name)</textarea></section>
-<section class="panel"><div class="panelhead"><span class="label">☕ Java output</span><span class="language">OPENJDK 21</span></div><textarea id="java" spellcheck="false">public class Main {
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PY2JAVA Cloud IDE</title>
+    <style>
+        :root {
+            --bg: #080d14;
+            --panel: #101925;
+            --line: #26364a;
+            --text: #e9f1fa;
+            --muted: #91a4b9;
+            --green: #65f0a5;
+            --blue: #59b9ff;
+            --red: #ff818b
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(ellipse at 15% 0%, #142b3e, transparent 38%), var(--bg);
+            color: var(--text);
+            font: 14px Inter, system-ui, sans-serif
+        }
+
+        header {
+            height: 64px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 22px;
+            background: #080d14eF
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 850;
+            letter-spacing: .07em
+        }
+
+        .brand b {
+            color: var(--green)
+        }
+
+        .badge {
+            color: var(--green);
+            border: 1px solid #285b48;
+            border-radius: 30px;
+            padding: 5px 10px;
+            font-size: 11px
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: calc(100vh - 64px)
+        }
+
+        aside {
+            border-right: 1px solid var(--line);
+            padding: 18px 13px;
+            background: #0b131d
+        }
+
+        .side-title {
+            color: #72869c;
+            font-size: 10px;
+            letter-spacing: .15em;
+            margin: 12px 8px
+        }
+
+        .nav {
+            padding: 10px;
+            border-radius: 7px;
+            color: #c4d1df;
+            margin: 3px 0
+        }
+
+        .nav.active {
+            background: #183044;
+            color: var(--green)
+        }
+
+        .hint {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.6;
+            padding: 12px 8px
+        }
+
+        main {
+            padding: 20px;
+            min-width: 0
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap
+        }
+
+        h1 {
+            font-size: 23px;
+            margin: 0
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            border: 1px solid var(--line);
+            background: #172435;
+            color: var(--text);
+            border-radius: 7px;
+            padding: 9px 12px;
+            cursor: pointer;
+            font-weight: 650
+        }
+
+        .btn:hover {
+            border-color: var(--blue)
+        }
+
+        .run {
+            background: linear-gradient(110deg, #188c60, #126c9c);
+            border: 0
+        }
+
+        .editors {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px
+        }
+
+        .panel {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--panel);
+            min-width: 0
+        }
+
+        .panelhead {
+            padding: 11px 13px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .label {
+            font-weight: 750
+        }
+
+        .language {
+            color: var(--muted);
+            font-size: 11px
+        }
+
+        textarea {
+            width: 100%;
+            height: 390px;
+            resize: vertical;
+            border: 0;
+            outline: 0;
+            background: #09111a;
+            color: #dceafa;
+            padding: 16px;
+            font: 13px/1.7 ui-monospace, Consolas, monospace;
+            tab-size: 4
+        }
+
+        #output {
+            color: #b9e2ff
+        }
+
+        .console {
+            margin-top: 12px
+        }
+
+        .consolebody {
+            padding: 12px;
+            background: #080e15;
+            min-height: 115px;
+            max-height: 210px;
+            overflow: auto;
+            white-space: pre-wrap;
+            color: #b7c8d8;
+            font: 12px/1.6 ui-monospace, monospace
+        }
+
+        .consolebody .err {
+            color: var(--red)
+        }
+
+        .terminalbar {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid var(--line)
+        }
+
+        select {
+            background: #111d2a;
+            color: var(--text);
+            border: 1px solid var(--line);
+            padding: 7px;
+            border-radius: 6px
+        }
+
+        .status {
+            font-size: 11px;
+            color: var(--muted);
+            margin-left: auto;
+            align-self: center
+        }
+
+        .foot {
+            margin-top: 12px;
+            color: #8295a9;
+            font-size: 11px;
+            line-height: 1.6
+        }
+
+        .assistant {
+            margin-top: 12px
+        }
+
+        .assistantbody {
+            display: flex;
+            gap: 8px;
+            padding: 10px
+        }
+
+        .assistantbody textarea {
+            height: 78px;
+            min-height: 78px;
+            flex: 1
+        }
+
+        .ai-settings {
+            width: min(560px, calc(100% - 24px));
+            max-height: 90vh;
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--text);
+            padding: 0
+        }
+
+        .ai-settings::backdrop {
+            background: #000b
+        }
+
+        .ai-settings form {
+            padding: 18px
+        }
+
+        .ai-settings h2 {
+            margin: 0 0 8px
+        }
+
+        .ai-settings label {
+            display: block;
+            margin: 13px 0 5px;
+            font-weight: 650
+        }
+
+        .ai-settings input,
+        .ai-settings select {
+            width: 100%;
+            padding: 9px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: #09111a;
+            color: var(--text)
+        }
+
+        .ai-settings fieldset {
+            margin: 12px 0;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px
+        }
+
+        .ai-settings legend {
+            padding: 0 6px;
+            color: var(--muted)
+        }
+
+        .ai-settings fieldset:disabled {
+            opacity: .55
+        }
+
+        .ai-settings .muted {
+            line-height: 1.6
+        }
+
+        .settings-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px
+        }
+
+        @media(max-width:850px) {
+            .layout {
+                grid-template-columns: 1fr
+            }
+
+            aside {
+                display: none
+            }
+
+            .editors {
+                grid-template-columns: 1fr
+            }
+
+            textarea {
+                height: 280px
+            }
+
+            main {
+                padding: 13px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="brand">PY<b>2</b>JAVA <span class="muted">/ CLOUD IDE</span></div>
+        <div class="badge">● LOCAL SANDBOX MODE</div>
+    </header>
+    <div class="layout">
+        <aside>
+            <div class="side-title">WORKSPACE</div>
+            <div class="nav active">⌘ Editor</div>
+            <div class="nav">▣ Python runtime</div>
+            <div class="nav">☕ Java runtime</div>
+            <div class="nav">▤ Terminal tools</div>
+            <div class="side-title">PROJECT</div>
+            <div class="nav">📁 Main.java</div>
+            <div class="nav">📄 main.py</div>
+            <p class="hint">Starter workspace<br>Execution runs in isolated Docker containers on the machine hosting
+                this app.</p>
+        </aside>
+        <main>
+            <div class="top">
+                <div>
+                    <h1>Code workspace</h1>
+                    <div class="muted">Write · translate · execute</div>
+                </div>
+                <div class="buttons"><button class="btn" id="translate">⇄ Quick translate</button><button class="btn"
+                        id="ai-translate">AI translate</button><button class="btn" id="explain">Explain
+                        code</button><button class="btn" id="compare">Compare syntax</button><button class="btn"
+                        id="ai-settings-button">AI settings</button><button class="btn" id="download">↓ Download
+                        Java</button><button class="btn run" id="run">▶ Run code</button></div>
+            </div>
+            <div class="editors">
+                <section class="panel">
+                    <div class="panelhead"><span class="label">🐍 Python source</span><span class="language">PYTHON
+                            3</span></div><textarea id="py" spellcheck="false">name = "World"
+print("Hello, " + name)</textarea>
+                </section>
+                <section class="panel">
+                    <div class="panelhead"><span class="label">☕ Java output</span><span class="language">OPENJDK
+                            21</span></div><textarea id="java" spellcheck="false">public class Main {
     public static void main(String[] args) {
         System.out.println("Hello, World");
     }
-}</textarea></section></div>
-<section class="panel console"><div class="panelhead"><span class="label">▸ Output / Diagnostics</span><span class="language" id="state">READY</span></div><div class="consolebody" id="console">Welcome to PY2JAVA. Choose a language and click Run code.</div><div class="terminalbar"><select id="lang"><option value="python">Run Python 3</option><option value="java">Compile & run Java</option></select><select id="cmd"><option value="">Terminal tools…</option><option>python --version</option><option>java -version</option><option>javac -version</option><option>pwd</option><option>ls</option></select><button class="btn" id="terminal">Run command</button><span class="status" id="health">Checking Docker…</span></div></section>
-<section class="panel assistant"><div class="panelhead"><span class="label">AI code assistant</span><span class="language">Explains, compares, and answers code questions</span></div><div class="assistantbody"><textarea id="ai-question" aria-label="Ask the AI about the code" placeholder="Ask a question about your Python or Java code…"></textarea><button class="btn run" id="ask-ai">Ask AI</button></div></section>
-<div class="foot">Security note: this is a local MVP. Code execution requires Docker and runs with network disabled, memory/CPU/PID limits, dropped capabilities and a read-only container filesystem. AI requests send your code and question to the provider you configure; API keys are kept only in this page session. Do not expose this development server publicly.</div>
-</main></div>
-<dialog class="ai-settings" id="ai-settings-dialog"><form id="ai-settings-form">
-<h2>AI provider settings</h2>
-<label for="ai-mode">AI mode</label><select id="ai-mode"><option value="auto">Automatic: cloud API with Ollama fallback</option><option value="ollama-only">Ollama only (never use cloud API)</option></select><p class="muted">Ollama-only mode sends no cloud API key and makes no cloud provider requests.</p>
-<fieldset id="cloud-settings"><legend>Cloud provider</legend><p class="muted">Configure any OpenAI-compatible API. Examples: OpenAI <code>https://api.openai.com/v1</code>; Gemini <code>https://generativelanguage.googleapis.com/v1beta/openai</code>; Groq <code>https://api.groq.com/openai/v1</code>.</p>
-<label for="ai-base-url">API base URL</label><input id="ai-base-url" type="url" autocomplete="url" placeholder="https://api.openai.com/v1">
-<label for="ai-model">Model name</label><input id="ai-model" type="text" autocomplete="off" placeholder="Enter a model supported by your provider">
-<label for="ai-api-key">API key</label><input id="ai-api-key" type="password" autocomplete="new-password" placeholder="Paste your provider API key">
-<p class="muted">The key stays in this page's memory and is not saved in browser storage or on the server. It is sent through this local app to the configured provider. Ollama is tried if the cloud provider is not configured or unavailable.</p>
-</fieldset>
-<label for="ollama-url">Ollama URL</label><input id="ollama-url" type="url" value="http://localhost:11434">
-<label for="ollama-model">Ollama fallback model</label><input id="ollama-model" type="text" value="qwen2.5-coder:3b">
-<p class="muted">To use the fallback, install Ollama and pull the selected model, for example <code>ollama pull qwen2.5-coder:3b</code>.</p>
-<div class="settings-actions"><button class="btn" type="button" id="cancel-ai-settings">Cancel</button><button class="btn run" type="submit">Save for this session</button></div>
-</form></dialog>
-<script>
-const $=id=>document.getElementById(id);
-async function api(path,data){let r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});let j=await r.json();if(!r.ok)throw Error(j.detail||'Request failed');return j}
-function show(s,err=false){$('console').textContent=s;$('console').className='consolebody'+(err?' err':'')}
-let aiSettings={mode:'auto',baseUrl:'https://api.openai.com/v1',model:'',apiKey:'',ollamaUrl:'http://localhost:11434',ollamaModel:'qwen2.5-coder:3b'};
-function updateAiMode(){$('cloud-settings').disabled=$('ai-mode').value==='ollama-only'}
-function openAiSettings(){$('ai-mode').value=aiSettings.mode;$('ai-base-url').value=aiSettings.baseUrl;$('ai-model').value=aiSettings.model;$('ai-api-key').value=aiSettings.apiKey;$('ollama-url').value=aiSettings.ollamaUrl;$('ollama-model').value=aiSettings.ollamaModel;updateAiMode();$('ai-settings-dialog').showModal()}
-$('ai-settings-button').onclick=openAiSettings;
-$('ai-mode').onchange=updateAiMode;
-$('cancel-ai-settings').onclick=()=>$('ai-settings-dialog').close();
-$('ai-settings-form').onsubmit=e=>{e.preventDefault();aiSettings={mode:$('ai-mode').value,baseUrl:$('ai-base-url').value.trim(),model:$('ai-model').value.trim(),apiKey:$('ai-api-key').value,ollamaUrl:$('ollama-url').value.trim(),ollamaModel:$('ollama-model').value.trim()};$('ai-settings-dialog').close();show('AI settings saved in this page session only.')};
-async function askAi(task){
- let language=task==='compare'||task==='translate'?'python':$('lang').value;
- let code=language==='python'?$('py').value:$('java').value;
- let request={task,language,code,javaCode:$('java').value,question:$('ai-question').value,mode:aiSettings.mode,ollamaUrl:aiSettings.ollamaUrl,ollamaModel:aiSettings.ollamaModel};
- if(aiSettings.mode!=='ollama-only')Object.assign(request,{baseUrl:aiSettings.baseUrl,model:aiSettings.model,apiKey:aiSettings.apiKey});
- $('state').textContent='THINKING…';show('Waiting for AI response…');
- try{
-  let r=await api('/api/ai/assist',request);
-  let header='AI provider: '+r.provider+(r.used_fallback?' (fallback)':'');
-  if(task==='translate'){$('java').value=r.content;show(r.content);$('state').textContent='AI TRANSLATED · '+r.provider+(r.used_fallback?' fallback':'')}
-  else{show(header+'\n'+(r.warning?r.warning+'\n\n':'')+r.content);$('state').textContent='AI READY'}
- }catch(e){show(e.message,true);$('state').textContent='AI ERROR';if(e.message.includes('API key')||e.message.includes('AI settings'))openAiSettings()}
-}
-$('ai-translate').onclick=()=>askAi('translate');
-$('explain').onclick=()=>askAi('explain');
-$('compare').onclick=()=>askAi('compare');
-$('ask-ai').onclick=()=>askAi('question');
-$('translate').onclick=async()=>{try{let r=await api('/api/translate',{code:$('py').value});$('java').value=r.java;show('Translation complete.\\n'+(r.warnings.length?r.warnings.join('\\n'):'No obvious unsupported statements.')+'\\n\\n'+r.explanation);$('state').textContent='TRANSLATED'}catch(e){show(e.message,true)}};
-$('run').onclick=async()=>{let language=$('lang').value,code=language==='python'?$('py').value:$('java').value;$('state').textContent='RUNNING…';show('Starting isolated '+language+' container…');try{let r=await api('/api/run',{language,code});show((r.stdout||'')+(r.stderr?'\\n[stderr]\\n'+r.stderr:'')+'\\n[exit code: '+r.exit_code+']',r.exit_code!==0);$('state').textContent=r.exit_code===0?'FINISHED':'ERROR'}catch(e){show(e.message,true);$('state').textContent='ERROR'}};
-$('download').onclick=()=>{let blob=new Blob([$('java').value],{type:'text/plain'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Main.java';a.click();URL.revokeObjectURL(a.href)};
-$('terminal').onclick=async()=>{let command=$('cmd').value;if(!command){show('Choose a supported diagnostic command first.');return}try{let r=await api('/api/terminal',{command});show((r.stdout||'')+(r.stderr?'\\n'+r.stderr:'')+'\\n[exit code: '+r.exit_code+']',r.exit_code!==0)}catch(e){show(e.message,true)}};
-fetch('/api/health').then(r=>r.json()).then(j=>$('health').textContent=j.docker_available?'Docker connected':'Docker not running').catch(()=>$('health').textContent='API unavailable');
-</script></body></html>
+}</textarea>
+                </section>
+            </div>
+            <section class="panel console">
+                <div class="panelhead"><span class="label">▸ Output / Diagnostics</span><span class="language"
+                        id="state">READY</span></div>
+                <div class="consolebody" id="console">Welcome to PY2JAVA. Choose a language and click Run code.</div>
+                <div class="terminalbar"><select id="lang">
+                        <option value="python">Run Python 3</option>
+                        <option value="java">Compile & run Java</option>
+                    </select><select id="cmd">
+                        <option value="">Terminal tools…</option>
+                        <option>python --version</option>
+                        <option>java -version</option>
+                        <option>javac -version</option>
+                        <option>pwd</option>
+                        <option>ls</option>
+                    </select><button class="btn" id="terminal">Run command</button><span class="status"
+                        id="health">Checking Docker…</span></div>
+            </section>
+            <section class="panel assistant">
+                <div class="panelhead"><span class="label">AI code assistant</span><span class="language">Explains,
+                        compares, and answers code questions</span></div>
+                <div class="assistantbody"><textarea id="ai-question" aria-label="Ask the AI about the code"
+                        placeholder="Ask a question about your Python or Java code…"></textarea><button class="btn run"
+                        id="ask-ai">Ask AI</button></div>
+            </section>
+            <div class="foot">Security note: this is a local MVP. Code execution requires Docker and runs with network
+                disabled, memory/CPU/PID limits, dropped capabilities and a read-only container filesystem. AI requests
+                send your code and question to the provider you configure; API keys are kept only in this page session.
+                Do not expose this development server publicly.</div>
+        </main>
+    </div>
+    <dialog class="ai-settings" id="ai-settings-dialog">
+        <form id="ai-settings-form">
+            <h2>AI provider settings</h2>
+            <label for="ai-mode">AI mode</label><select id="ai-mode">
+                <option value="auto">Automatic: cloud API with Ollama fallback</option>
+                <option value="ollama-only">Ollama only (never use cloud API)</option>
+            </select>
+            <p class="muted">Ollama-only mode sends no cloud API key and makes no cloud provider requests.</p>
+            <fieldset id="cloud-settings">
+                <legend>Cloud provider</legend>
+                <p class="muted">Configure any OpenAI-compatible API. Examples: OpenAI
+                    <code>https://api.openai.com/v1</code>; Gemini
+                    <code>https://generativelanguage.googleapis.com/v1beta/openai</code>; Groq
+                    <code>https://api.groq.com/openai/v1</code>.</p>
+                <label for="ai-base-url">API base URL</label><input id="ai-base-url" type="url" autocomplete="url"
+                    placeholder="https://api.openai.com/v1">
+                <label for="ai-model">Model name</label><input id="ai-model" type="text" autocomplete="off"
+                    placeholder="Enter a model supported by your provider">
+                <label for="ai-api-key">API key</label><input id="ai-api-key" type="password"
+                    autocomplete="new-password" placeholder="Paste your provider API key">
+                <p class="muted">The key stays in this page's memory and is not saved in browser storage or on the
+                    server. It is sent through this local app to the configured provider. Ollama is tried if the cloud
+                    provider is not configured or unavailable.</p>
+            </fieldset>
+            <label for="ollama-url">Ollama URL</label><input id="ollama-url" type="url" value="http://localhost:11434">
+            <label for="ollama-model">Ollama fallback model</label><input id="ollama-model" type="text"
+                value="qwen2.5-coder:3b">
+            <p class="muted">To use the fallback, install Ollama and pull the selected model, for example
+                <code>ollama pull qwen2.5-coder:3b</code>.</p>
+            <div class="settings-actions"><button class="btn" type="button"
+                    id="cancel-ai-settings">Cancel</button><button class="btn run" type="submit">Save for this
+                    session</button></div>
+        </form>
+    </dialog>
+    <script>
+        const $ = id => document.getElementById(id);
+        async function api(path, data) { let r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); let j = await r.json(); if (!r.ok) throw Error(j.detail || 'Request failed'); return j }
+        function show(s, err = false) { $('console').textContent = s; $('console').className = 'consolebody' + (err ? ' err' : '') }
+        let aiSettings = { mode: 'auto', baseUrl: 'https://api.openai.com/v1', model: '', apiKey: '', ollamaUrl: 'http://localhost:11434', ollamaModel: 'qwen2.5-coder:3b' };
+        function updateAiMode() { $('cloud-settings').disabled = $('ai-mode').value === 'ollama-only' }
+        function openAiSettings() { $('ai-mode').value = aiSettings.mode; $('ai-base-url').value = aiSettings.baseUrl; $('ai-model').value = aiSettings.model; $('ai-api-key').value = aiSettings.apiKey; $('ollama-url').value = aiSettings.ollamaUrl; $('ollama-model').value = aiSettings.ollamaModel; updateAiMode(); $('ai-settings-dialog').showModal() }
+        $('ai-settings-button').onclick = openAiSettings;
+        $('ai-mode').onchange = updateAiMode;
+        $('cancel-ai-settings').onclick = () => $('ai-settings-dialog').close();
+        $('ai-settings-form').onsubmit = e => { e.preventDefault(); aiSettings = { mode: $('ai-mode').value, baseUrl: $('ai-base-url').value.trim(), model: $('ai-model').value.trim(), apiKey: $('ai-api-key').value, ollamaUrl: $('ollama-url').value.trim(), ollamaModel: $('ollama-model').value.trim() }; $('ai-settings-dialog').close(); show('AI settings saved in this page session only.') };
+        async function askAi(task) {
+            let language = task === 'compare' || task === 'translate' ? 'python' : $('lang').value;
+            let code = language === 'python' ? $('py').value : $('java').value;
+            let request = { task, language, code, javaCode: $('java').value, question: $('ai-question').value, mode: aiSettings.mode, ollamaUrl: aiSettings.ollamaUrl, ollamaModel: aiSettings.ollamaModel };
+            if (aiSettings.mode !== 'ollama-only') Object.assign(request, { baseUrl: aiSettings.baseUrl, model: aiSettings.model, apiKey: aiSettings.apiKey });
+            $('state').textContent = 'THINKING…'; show('Waiting for AI response…');
+            try {
+                let r = await api('/api/ai/assist', request);
+                let header = 'AI provider: ' + r.provider + (r.used_fallback ? ' (fallback)' : '');
+                if (task === 'translate') { $('java').value = r.content; show(r.content); $('state').textContent = 'AI TRANSLATED · ' + r.provider + (r.used_fallback ? ' fallback' : '') }
+                else { show(header + '\n' + (r.warning ? r.warning + '\n\n' : '') + r.content); $('state').textContent = 'AI READY' }
+            } catch (e) { show(e.message, true); $('state').textContent = 'AI ERROR'; if (e.message.includes('API key') || e.message.includes('AI settings')) openAiSettings() }
+        }
+        $('ai-translate').onclick = () => askAi('translate');
+        $('explain').onclick = () => askAi('explain');
+        $('compare').onclick = () => askAi('compare');
+        $('ask-ai').onclick = () => askAi('question');
+        $('translate').onclick = async () => { try { let r = await api('/api/translate', { code: $('py').value }); $('java').value = r.java; show('Translation complete.\\n' + (r.warnings.length ? r.warnings.join('\\n') : 'No obvious unsupported statements.') + '\\n\\n' + r.explanation); $('state').textContent = 'TRANSLATED' } catch (e) { show(e.message, true) } };
+        $('run').onclick = async () => { let language = $('lang').value, code = language === 'python' ? $('py').value : $('java').value; $('state').textContent = 'RUNNING…'; show('Starting isolated ' + language + ' container…'); try { let r = await api('/api/run', { language, code }); show((r.stdout || '') + (r.stderr ? '\\n[stderr]\\n' + r.stderr : '') + '\\n[exit code: ' + r.exit_code + ']', r.exit_code !== 0); $('state').textContent = r.exit_code === 0 ? 'FINISHED' : 'ERROR' } catch (e) { show(e.message, true); $('state').textContent = 'ERROR' } };
+        $('download').onclick = () => { let blob = new Blob([$('java').value], { type: 'text/plain' }), a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Main.java'; a.click(); URL.revokeObjectURL(a.href) };
+        $('terminal').onclick = async () => { let command = $('cmd').value; if (!command) { show('Choose a supported diagnostic command first.'); return } try { let r = await api('/api/terminal', { command }); show((r.stdout || '') + (r.stderr ? '\\n' + r.stderr : '') + '\\n[exit code: ' + r.exit_code + ']', r.exit_code !== 0) } catch (e) { show(e.message, true) } };
+        fetch('/api/health').then(r => r.json()).then(j => $('health').textContent = j.docker_available ? 'Docker connected' : 'Docker not running').catch(() => $('health').textContent = 'API unavailable');
+    </script>
+</body>
+
+</html>
